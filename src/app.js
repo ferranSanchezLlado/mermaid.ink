@@ -2,6 +2,7 @@ const Koa = require('koa');
 const cors = require('@koa/cors');
 const createDebug = require('debug');
 const route = require('koa-route');
+const bodyParser = require('koa-bodyparser');
 const puppeteer = require('puppeteer');
 
 const views = require('./views');
@@ -20,15 +21,17 @@ app.use(async (ctx, next) => {
 
 app.use(
   cors({
-    allowMethods: 'GET',
+    allowMethods: ['GET', 'POST'],
     origin(ctx) {
       return ctx.get('Origin') || '*';
     },
   })
 );
+app.use(bodyParser());
 app.use(route.get('/', views.home));
 app.use(route.get('/services/oembed', views.servicesOembed));
 app.use(route.get('/img/:encodedCode', views.img));
+app.use(route.post('/img', views.imgPost));
 app.use(route.get('/svg/:encodedCode', views.svg));
 app.use(route.get('/pdf/:encodedCode', views.pdf));
 
